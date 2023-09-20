@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title th:text="#{avaliacao.list.headline}" />
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 th:text="#{avaliacao.list.headline}" class="flex-grow-1" />
+                <div>
+                    <a th:href="@{/avaliacaos/add}" th:text="#{avaliacao.list.createNew}" class="btn btn-primary ms-2" />
+                </div>
+            </div>
+            <div th:if="${avaliacaos.empty}" th:text="#{avaliacao.list.empty}" />
+            <div th:if="${!avaliacaos.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th th:text="#{avaliacao.id.label}" scope="col" />
+                            <th th:text="#{avaliacao.titulo.label}" scope="col" />
+                            <th th:text="#{avaliacao.descricao.label}" scope="col" />
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="avaliacao : ${avaliacaos}">
+                            <td th:text="${avaliacao.id}" />
+                            <td th:text="${avaliacao.titulo}" />
+                            <td th:text="${avaliacao.descricao}" />
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/avaliacaos/edit/{id}(id=${avaliacao.id})}" th:text="#{avaliacao.list.edit}" class="btn btn-sm btn-secondary" />
+                                    <form th:action="@{/avaliacaos/delete/{id}(id=${avaliacao.id})}"
+                                            th:data-confirm-message="#{delete.confirm}" method="post" class="js-submit-confirm d-inline">
+                                        <button th:text="#{avaliacao.list.delete}" type="submit" class="btn btn-sm btn-secondary" />
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

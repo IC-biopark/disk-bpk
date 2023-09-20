@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title th:text="#{turma.list.headline}" />
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 th:text="#{turma.list.headline}" class="flex-grow-1" />
+                <div>
+                    <a th:href="@{/turmas/add}" th:text="#{turma.list.createNew}" class="btn btn-primary ms-2" />
+                </div>
+            </div>
+            <div th:if="${turmas.empty}" th:text="#{turma.list.empty}" />
+            <div th:if="${!turmas.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th th:text="#{turma.id.label}" scope="col" />
+                            <th th:text="#{turma.nome.label}" scope="col" />
+                            <th th:text="#{turma.periodo.label}" scope="col" />
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="turma : ${turmas}">
+                            <td th:text="${turma.id}" />
+                            <td th:text="${turma.nome}" />
+                            <td th:text="${turma.periodo}" />
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/turmas/edit/{id}(id=${turma.id})}" th:text="#{turma.list.edit}" class="btn btn-sm btn-secondary" />
+                                    <form th:action="@{/turmas/delete/{id}(id=${turma.id})}"
+                                            th:data-confirm-message="#{delete.confirm}" method="post" class="js-submit-confirm d-inline">
+                                        <button th:text="#{turma.list.delete}" type="submit" class="btn btn-sm btn-secondary" />
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

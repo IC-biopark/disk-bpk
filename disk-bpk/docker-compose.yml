@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: postgres:15.4
+    environment:
+    - POSTGRES_DB=disk-bpk
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=P4ssword!
+    ports:
+    - 5433:5432
