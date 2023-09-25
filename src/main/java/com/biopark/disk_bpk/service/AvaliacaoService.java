@@ -3,15 +3,20 @@ package com.biopark.disk_bpk.service;
 import com.biopark.disk_bpk.domain.Avaliacao;
 import com.biopark.disk_bpk.domain.Pergunta;
 import com.biopark.disk_bpk.domain.Resposta;
+import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;
 import com.biopark.disk_bpk.repos.AvaliacaoRepository;
 import com.biopark.disk_bpk.repos.PerguntaRepository;
 import com.biopark.disk_bpk.repos.RespostaRepository;
+import com.biopark.disk_bpk.repos.TurmaRepository;
 import com.biopark.disk_bpk.repos.UsuarioRepository;
 import com.biopark.disk_bpk.util.NotFoundException;
 import com.biopark.disk_bpk.util.WebUtils;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,21 +26,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class AvaliacaoService {
 
     private final AvaliacaoRepository avaliacaoRepository;
     private final PerguntaRepository perguntaRepository;
     private final UsuarioRepository usuarioRepository;
     private final RespostaRepository respostaRepository;
-
-    public AvaliacaoService(final AvaliacaoRepository avaliacaoRepository,
-            final PerguntaRepository perguntaRepository, final UsuarioRepository usuarioRepository,
-            final RespostaRepository respostaRepository) {
-        this.avaliacaoRepository = avaliacaoRepository;
-        this.perguntaRepository = perguntaRepository;
-        this.usuarioRepository = usuarioRepository;
-        this.respostaRepository = respostaRepository;
-    }
+    private final TurmaRepository turmaRepository;
 
     public List<AvaliacaoDTO> findAll() {
         final List<Avaliacao> avaliacaos = avaliacaoRepository.findAll(Sort.by("id"));
@@ -95,6 +93,9 @@ public class AvaliacaoService {
             throw new NotFoundException("one of usuariosQueFinalizaram not found");
         }
         avaliacao.setUsuariosQueFinalizaram(usuariosQueFinalizaram.stream().collect(Collectors.toSet()));
+        final List<Turma> turmaList = turmaRepository.findAllById(
+                avaliacaoDTO.getTurmaList() == null ? Collections.emptyList() : avaliacaoDTO.getTurmaList());
+        avaliacao.setTurmaList(turmaList);
         return avaliacao;
     }
 
@@ -106,6 +107,21 @@ public class AvaliacaoService {
             return WebUtils.getMessage("avaliacao.resposta.avaliacao.referenced", avaliacaoResposta.getId());
         }
         return null;
+    }
+
+    /**
+     * Retorna a uma lista de avaliações que o usuario tem que responder.
+     * O critério para saber as avaliações que ele tem que responder é as turmas as quais ele participa
+     * 
+     * @param id - Id do usuario logado
+     */
+    public List<Avaliacao> findAvaliacoesParaResponder(Long id) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
+        List<Avaliacao> avaliacoesParaResponder = new ArrayList<>();
+        for (Turma turma : usuario.getTurmaList()) {
+            avaliacoesParaResponder.add(avaliacaoRepository.findByTurma(turma));
+        }
+        return avaliacoesParaResponder;
     }
 
 }

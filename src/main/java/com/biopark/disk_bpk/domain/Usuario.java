@@ -53,7 +53,7 @@ public class Usuario implements UserDetails {
 
         @ManyToMany
         @JoinTable(name = "usuario_turma", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "turma_id"))
-        private Set<Turma> turmaList;
+        private List<Turma> turmaList;
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "cargo_id", nullable = false)

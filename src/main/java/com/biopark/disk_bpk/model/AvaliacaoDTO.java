@@ -25,4 +25,6 @@ public class AvaliacaoDTO {
 
     private List<Long> usuariosQueFinalizaram;
 
+    private List<Long> turmaList;
+
 }

@@ -12,6 +12,8 @@ import java.time.OffsetDateTime;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -45,6 +47,9 @@ public class Turma {
 
     @ManyToMany(mappedBy = "turmaList")
     private Set<Usuario> usuarioList;
+
+    @ManyToMany(mappedBy = "turmaList")
+    private List<Avaliacao> avaliacoesFinalizadas;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

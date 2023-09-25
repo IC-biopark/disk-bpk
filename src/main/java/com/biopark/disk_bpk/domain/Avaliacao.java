@@ -11,6 +11,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,6 +61,14 @@ public class Avaliacao {
             inverseJoinColumns = @JoinColumn(name = "usuario_id")
     )
     private Set<Usuario> usuariosQueFinalizaram;
+
+    @ManyToMany
+    @JoinTable(
+            name = "avaliacao_turma",
+            joinColumns = @JoinColumn(name = "avaliacao_id"),
+            inverseJoinColumns = @JoinColumn(name = "turma_id")
+    )
+    private List<Turma> turmaList;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

@@ -1,14 +1,18 @@
 package com.biopark.disk_bpk.controller;
 
 import com.biopark.disk_bpk.domain.Pergunta;
+import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;
 import com.biopark.disk_bpk.repos.PerguntaRepository;
+import com.biopark.disk_bpk.repos.TurmaRepository;
 import com.biopark.disk_bpk.repos.UsuarioRepository;
 import com.biopark.disk_bpk.service.AvaliacaoService;
 import com.biopark.disk_bpk.util.CustomCollectors;
 import com.biopark.disk_bpk.util.WebUtils;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+@AllArgsConstructor
 @Controller
 @RequestMapping("/avaliacaos")
 public class AvaliacaoController {
@@ -28,14 +33,7 @@ public class AvaliacaoController {
     private final AvaliacaoService avaliacaoService;
     private final PerguntaRepository perguntaRepository;
     private final UsuarioRepository usuarioRepository;
-
-    public AvaliacaoController(final AvaliacaoService avaliacaoService,
-            final PerguntaRepository perguntaRepository,
-            final UsuarioRepository usuarioRepository) {
-        this.avaliacaoService = avaliacaoService;
-        this.perguntaRepository = perguntaRepository;
-        this.usuarioRepository = usuarioRepository;
-    }
+    private final TurmaRepository turmaRepository;
 
     @ModelAttribute
     public void prepareContext(final Model model) {
@@ -45,6 +43,9 @@ public class AvaliacaoController {
         model.addAttribute("usuariosQueFinalizaramValues", usuarioRepository.findAll(Sort.by("id"))
                 .stream()
                 .collect(CustomCollectors.toSortedMap(Usuario::getId, Usuario::getNome)));
+        model.addAttribute("turmaListValues", turmaRepository.findAll(Sort.by("id"))
+                .stream()
+                .collect(CustomCollectors.toSortedMap(Turma::getId, Turma::getNome)));
     }
 
     @GetMapping
@@ -97,6 +98,12 @@ public class AvaliacaoController {
             redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("avaliacao.delete.success"));
         }
         return "redirect:/avaliacaos";
+    }
+
+    @GetMapping("avaliacoes-para-responder/{id}")
+    public String avaliacoesParaResponder(final Model model, @PathVariable final Long id) {
+        model.addAttribute("avaliacoes", avaliacaoService.findAvaliacoesParaResponder(id));
+        return "avaliacao/avaliacoes-para-responder";
     }
 
 }
