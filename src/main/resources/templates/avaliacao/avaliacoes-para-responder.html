@@ -14,7 +14,7 @@
                 <a th:href="@{/avaliacoes/add}" th:text="#{avaliacao.list.createNew}" class="btn btn-primary ms-2" />
             </div>
         </div>
-        <div th:if="${avaliacoes.empty}" th:text="#{avaliacoes.list.empty}" />
+        <div th:if="${avaliacoes.empty}" th:text="#{avaliacao.list.empty}" />
         <div th:if="${!avaliacoes.empty}" class="table-responsive">
             <table class="table table-striped table-hover align-middle">
                 <thead>
