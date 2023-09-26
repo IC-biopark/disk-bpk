@@ -18,10 +18,8 @@
                 <div th:replace="~{fragments/forms::inputRow(object='usuario', field='nome')}" />
                 <div th:replace="~{fragments/forms::inputRow(object='usuario', field='segundoNome')}" />
                 <div th:replace="~{fragments/forms::inputRow(object='usuario', field='email')}" />
-                <div th:replace="~{fragments/forms::inputRow(object='usuario', field='senha')}" />
                 <div th:replace="~{fragments/forms::inputRow(object='usuario', field='turmaList', type='multiselect')}" />
                 <div th:replace="~{fragments/forms::inputRow(object='usuario', field='cargo', type='select')}" />
-                <div th:replace="~{fragments/forms::inputRow(object='usuario', field='respostaList', type='select')}" />
                 <input type="submit" th:value="#{usuario.edit.headline}" class="btn btn-primary mt-4" />
             </form>
         </div>

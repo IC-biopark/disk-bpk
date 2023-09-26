@@ -16,7 +16,6 @@ import jakarta.persistence.SequenceGenerator;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,7 +51,7 @@ public class Usuario implements UserDetails {
         private String senha;
 
         @ManyToMany
-        @JoinTable(name = "usuario_turma", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "turma_id"))
+        @JoinTable(name = "usuario_turma", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "turma_id"), nullable = false)
         private List<Turma> turmaList;
 
         @ManyToOne(fetch = FetchType.LAZY)
