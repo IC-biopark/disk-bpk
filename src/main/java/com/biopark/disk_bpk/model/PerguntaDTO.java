@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 
 
 @Getter
@@ -22,5 +23,8 @@ public class PerguntaDTO {
 
     @NotNull
     private TipoPergunta tipoPergunta;
+
+    @NotNull
+    private List<String> opcoes;
 
 }

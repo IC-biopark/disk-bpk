@@ -17,8 +17,35 @@
                 <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='questao')}" />
                 <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='ajuda')}" />
                 <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='tipoPergunta', type='radio')}" />
+
+                <div id="opcoesDiv">
+                    <div th:each="opcao, iterStat : ${pergunta.opcoes}" class="form-group opcao">
+                        <!-- <label th:for="'opcao-' + ${iterStat.index}" th:text="${'Opção ' + (iterStat.index + 1)}"></label> -->
+                        <div th:replace="~{fragments/forms::inputRow(object='pergunta.opcoes[__${iterStat.index}__]', field='*{}')}"></div>
+                    </div>
+                </div>
+        
+                <button type="button" id="addOpcao" class="btn btn-primary">Adicionar Nova Opção</button>
+
                 <input type="submit" th:value="#{pergunta.add.headline}" class="btn btn-primary mt-4" />
             </form>
         </div>
     </body>
 </html>
+
+<script th:inline="javascript">
+    function adicionarOpcao() {
+        var opcoesDiv = document.querySelector("#opcoesDiv");
+        var numOpcoes = document.querySelectorAll(".opcao").length;
+
+        var novoCampo = document.createElement("div");
+        novoCampo.classList.add("form-group", "opcao");
+        novoCampo.innerHTML = `
+            <input type="text" name="opcoes[${numOpcoes}]" id="opcao-${numOpcoes}" class="form-control" />
+        `;
+
+        opcoesDiv.appendChild(novoCampo);
+    }
+
+    document.querySelector("#addOpcao").addEventListener("click", adicionarOpcao);
+</script>

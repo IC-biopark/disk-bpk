@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
+
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -51,7 +52,7 @@ public class Usuario implements UserDetails {
         private String senha;
 
         @ManyToMany
-        @JoinTable(name = "usuario_turma", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "turma_id"), nullable = false)
+        @JoinTable(name = "usuario_turma", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "turma_id"))
         private List<Turma> turmaList;
 
         @ManyToOne(fetch = FetchType.LAZY)

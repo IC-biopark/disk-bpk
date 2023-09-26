@@ -21,10 +21,12 @@ public class AvaliacaoDTO {
     @Size(max = 100)
     private String descricao;
 
+    @NotNull
     private List<Long> perguntaList;
 
     private List<Long> usuariosQueFinalizaram;
 
+    @NotNull
     private List<Long> turmaList;
 
 }

@@ -10,6 +10,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
@@ -47,10 +49,11 @@ public class Avaliacao {
     private String descricao;
 
     @ManyToMany
+    @NotNull
     @JoinTable(
             name = "avaliacao_pergunta",
-            joinColumns = @JoinColumn(name = "avaliacao_id"),
-            inverseJoinColumns = @JoinColumn(name = "pergunta_id")
+            joinColumns = @JoinColumn(name = "avaliacao_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "pergunta_id", nullable = false)
     )
     private Set<Pergunta> perguntaList;
 
@@ -63,10 +66,11 @@ public class Avaliacao {
     private Set<Usuario> usuariosQueFinalizaram;
 
     @ManyToMany
+    @NotNull
     @JoinTable(
             name = "avaliacao_turma",
-            joinColumns = @JoinColumn(name = "avaliacao_id"),
-            inverseJoinColumns = @JoinColumn(name = "turma_id")
+            joinColumns = @JoinColumn(name = "avaliacao_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "turma_id", nullable = false)
     )
     private List<Turma> turmaList;
 

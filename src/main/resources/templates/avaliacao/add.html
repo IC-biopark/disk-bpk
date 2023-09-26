@@ -18,10 +18,7 @@
         <form th:action="${requestUri}" method="post">
             <div th:replace="~{fragments/forms::inputRow(object='avaliacao', field='titulo')}" />
             <div th:replace="~{fragments/forms::inputRow(object='avaliacao', field='descricao')}" />
-            <div
-                th:replace="~{fragments/forms::inputRow(object='avaliacao', field='perguntaList', type='multiselect')}" />
-            <div
-                th:replace="~{fragments/forms::inputRow(object='avaliacao', field='usuariosQueFinalizaram', type='multiselect')}" />
+            <div th:replace="~{fragments/forms::inputRow(object='avaliacao', field='perguntaList', type='multiselect')}" />
             <div th:replace="~{fragments/forms::inputRow(object='avaliacao', field='turmaList', type='multiselect')}" />
             <input type="submit" th:value="#{avaliacao.add.headline}" class="btn btn-primary mt-4" />
         </form>
