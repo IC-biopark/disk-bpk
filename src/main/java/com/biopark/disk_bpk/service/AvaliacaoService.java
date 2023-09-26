@@ -118,9 +118,19 @@ public class AvaliacaoService {
     public List<Avaliacao> findAvaliacoesParaResponder(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow();
         List<Avaliacao> avaliacoesParaResponder = new ArrayList<>();
+
+        // Retorna todas as avaliações que o usuario tem que responder de acordo com a turma que ele esta
         for (Turma turma : usuario.getTurmaList()) {
             avaliacoesParaResponder.add(avaliacaoRepository.findByTurma(turma));
         }
+
+        // Remove todas as avaliações que o usuario ja respondeu
+        for (Avaliacao avaliacao : avaliacoesParaResponder) {
+            if (avaliacao.getUsuariosQueFinalizaram().contains(usuario)){
+                avaliacoesParaResponder.remove(avaliacao);
+            }
+        }
+
         return avaliacoesParaResponder;
     }
 
