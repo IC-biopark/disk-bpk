@@ -4,7 +4,9 @@ import com.biopark.disk_bpk.domain.enums.ValorDiskOpcaoEnum;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+@Data
 public class OpcaoDTO {
 
     @NotNull

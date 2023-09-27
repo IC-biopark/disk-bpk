@@ -28,5 +28,4 @@ public class PerguntaDTO {
 
     @NotNull
     private List<OpcaoDTO> opcoes = new ArrayList<>();
-
 }

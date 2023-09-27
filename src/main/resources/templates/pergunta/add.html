@@ -20,60 +20,24 @@
             <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='ajuda')}" />
             <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='tipoPergunta', type='radio')}" />
 
-            <button type="button" id="addOpcao" class="btn btn-primary">Adicionar Nova Opção</button>
-
-            <div id="opcoesDiv">
-                <div th:each="opcao, iterStat : ${pergunta.opcoes}" class="form-group opcao">
-                    <label th:for="'opcao-' + ${iterStat.index}" th:text="${'Opção ' + (iterStat.index + 1)}"
-                        class="form-check-label">
-                        <span th:text="${'Opção ' + (iterStat.index + 1)}" /><span />
-                    </label>
-                    <div
-                        th:replace="~{fragments/forms::inputRow(object='pergunta.opcoes[__${iterStat.index}__]', field='opcoes[${iterStat.index}]')}">
+            <div th:each="opcao, stat : ${pergunta.opcoes}">
+                <div class="row mb-3">
+                    <label th:for="${'opcao-' + stat.index}" th:text="${'Opção ' + stat.index}" class="col-md-2 col-form-label"/>
+                    <div class="col-md-6">
+                        <input th:id="${'opcao-' + stat.index}" th:value="*{pergunta.opcoes[__${stat.index}__].descricao}" type="text" class="form-control"/>
+                    </div>
+                    <div class="col-md-4">
+                        <select th:field="*{valorDiskOpcaoEnumvalues}" class="form-select">
+                            <option value="" th:text="#{select.empty.label}" />
+                            <option th:each="optionValue : ${valorDiskOpcaoEnumvalues}" th:text="${optionValue}" th:value="${optionValue}"/>
+                        </select>
                     </div>
                 </div>
             </div>
-
+            
             <input type="submit" th:value="#{pergunta.add.headline}" class="btn btn-primary mt-4" />
         </form>
     </div>
 </body>
 
 </html>
-
-<script th:inline="javascript">
-    function adicionarOpcao() {
-        var opcoesDiv = document.querySelector("#opcoesDiv");
-        var numOpcoes = document.querySelectorAll(".opcao").length;
-
-        var divOpcao = document.createElement("div");
-        divOpcao.classList.add("col-md-10", "offset-md-2");
-
-        var novaRow = document.createElement("div");
-        novaRow.classList.add("row", "mb-3");
-
-        var label = document.createElement("label");
-        label.setAttribute("for", "opcao-" + numOpcoes);
-        label.classList.add("col-form-label", "col-md-2");
-        label.textContent = "Opção " + (numOpcoes + 1);
-
-        var divInput = document.createElement("div");
-        divInput.classList.add("col-md-10");
-
-        var input = document.createElement("input");
-        input.setAttribute("type", "text");
-        input.setAttribute("name", "opcoes[" + numOpcoes + "]");
-        input.setAttribute("id", "opcao-" + numOpcoes);
-        input.classList.add("form-control");
-
-        divInput.appendChild(input);
-
-        novaRow.appendChild(label);
-        novaRow.appendChild(divInput);
-        opcoesDiv.appendChild(novaRow);
-
-        opcoesDiv.appendChild(divOpcao);
-    }
-
-    document.querySelector("#addOpcao").addEventListener("click", adicionarOpcao);
-</script>
