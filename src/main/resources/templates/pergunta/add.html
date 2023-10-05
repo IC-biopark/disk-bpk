@@ -22,19 +22,24 @@
 
             <div th:each="opcao, stat : ${pergunta.opcoes}">
                 <div class="row mb-3">
-                    <label th:for="${'opcao-' + stat.index}" th:text="${'Opção ' + stat.index}" class="col-md-2 col-form-label"/>
+                    <label th:for="${'opcao-' + stat.index}" th:text="${'Opção ' + stat.index}"
+                        class="col-md-2 col-form-label" />
                     <div class="col-md-6">
-                        <input th:id="${'opcao-' + stat.index}" th:value="*{pergunta.opcoes[__${stat.index}__].descricao}" type="text" class="form-control"/>
+                        <input th:id="${'opcao-' + stat.index}"
+                            th:field="*{pergunta.opcoes[__${stat.index}__].descricao}"
+                            th:value="*{pergunta.opcoes[__${stat.index}__].descricao}" type="text"
+                            class="form-control" />
                     </div>
                     <div class="col-md-4">
-                        <select th:field="*{valorDiskOpcaoEnumvalues}" class="form-select">
+                        <select th:field="*{pergunta.opcoes[__${stat.index}__].valorDisk}" class="form-select">
                             <option value="" th:text="#{select.empty.label}" />
-                            <option th:each="optionValue : ${valorDiskOpcaoEnumvalues}" th:text="${optionValue}" th:value="${optionValue}"/>
+                            <option th:each="optionValue : ${valorDiskOpcaoEnumvalues}" th:text="${optionValue}"
+                                th:value="${optionValue}" />
                         </select>
                     </div>
                 </div>
             </div>
-            
+
             <input type="submit" th:value="#{pergunta.add.headline}" class="btn btn-primary mt-4" />
         </form>
     </div>

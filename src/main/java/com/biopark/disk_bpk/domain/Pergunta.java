@@ -2,6 +2,7 @@ package com.biopark.disk_bpk.domain;
 
 import com.biopark.disk_bpk.model.TipoPergunta;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -14,6 +15,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
@@ -53,8 +55,8 @@ public class Pergunta {
     @Enumerated(EnumType.STRING)
     private TipoPergunta tipoPergunta;
 
-    @OneToMany(mappedBy = "pergunta")
-    private List<Opcao> opcoes;
+    @OneToMany(mappedBy = "pergunta", cascade = CascadeType.ALL)
+    private List<Opcao> opcoes = new ArrayList<>();
 
     @ManyToMany(mappedBy = "perguntaList")
     private Set<Avaliacao> avaliacaoList;
