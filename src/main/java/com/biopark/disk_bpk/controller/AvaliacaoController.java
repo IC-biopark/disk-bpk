@@ -106,4 +106,9 @@ public class AvaliacaoController {
         return "avaliacao/avaliacoes-para-responder";
     }
 
+    @GetMapping("resposta-avaliacao/{id}")
+    public String respostaAvaliacao(final Model model, @PathVariable final Long id) {
+        model.addAttribute("avaliacao", avaliacaoService.get(id));
+        return "avaliacao/resposta-avaliacao";
+    }
 }
