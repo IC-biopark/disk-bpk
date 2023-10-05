@@ -2,6 +2,7 @@ package com.biopark.disk_bpk.service;
 
 import com.biopark.disk_bpk.domain.Avaliacao;
 import com.biopark.disk_bpk.domain.Cargo;
+import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.model.UsuarioDTO;
 import com.biopark.disk_bpk.repos.AvaliacaoRepository;
@@ -14,6 +15,7 @@ import com.biopark.disk_bpk.util.WebUtils;
 import jakarta.transaction.Transactional;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,18 +24,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final CargoRepository cargoRepository;
     private final AvaliacaoRepository avaliacaoRepository;
-
-    public UsuarioService(final UsuarioRepository usuarioRepository,
-            final TurmaRepository turmaRepository, final CargoRepository cargoRepository, AvaliacaoRepository avaliacaoRepository) {
-        this.usuarioRepository = usuarioRepository;
-        this.cargoRepository = cargoRepository;
-        this.avaliacaoRepository = avaliacaoRepository;
-    }
+    private final TurmaRepository turmaRepository;
 
     public List<UsuarioDTO> findAll() {
         final List<Usuario> usuarios = usuarioRepository.findAll(Sort.by("id"));
@@ -101,8 +98,12 @@ public class UsuarioService {
 
     private Usuario mapToEntity(final UsuarioDTO usuarioDTO, final Usuario usuario) {
         Cargo cargo = cargoRepository.findById(usuarioDTO.getCargo()).orElseThrow();
-        usuario.setCargo(cargo);
+        List<Turma> turmaList = turmaRepository.findAllById(usuarioDTO.getTurmaList());
+        String senha = get(usuarioDTO.getId()).getSenha();
         BeanUtils.copyProperties(usuarioDTO, usuario);
+        usuario.setSenha(senha);
+        usuario.setCargo(cargo);
+        usuario.setTurmaList(turmaList);
         return usuario;
     }
 

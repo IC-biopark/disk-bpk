@@ -42,6 +42,10 @@ public class Resposta {
     private String descricao;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "opcap_id", nullable = false)
+    private Opcao opcao;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pergunta_id", nullable = false)
     private Pergunta pergunta;
 
