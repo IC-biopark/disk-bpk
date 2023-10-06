@@ -22,7 +22,7 @@ public class AvaliacaoDTO {
     private String descricao;
 
     @NotNull
-    private List<Long> perguntaList;
+    private List<PerguntaDTO> perguntaList;
 
     private List<Long> usuariosQueFinalizaram;
 

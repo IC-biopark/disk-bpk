@@ -32,15 +32,8 @@
                         <td th:text="${avaliacoes.descricao}" />
                         <td>
                             <div class="float-end text-nowrap">
-                                <a th:href="@{/avaliacoes/edit/{id}(id=${avaliacoes.id})}"
-                                    th:text="#{avaliacao.avaliacoes-para-responder.edit}"
-                                    class="btn btn-sm btn-secondary" />
-                                <form th:action="@{/avaliacoes/delete/{id}(id=${avaliacoes.id})}"
-                                    th:data-confirm-message="#{delete.confirm}" method="post"
-                                    class="js-submit-confirm d-inline">
-                                    <button th:text="#{avaliacao.avaliacoes-para-responder.delete}" type="submit"
-                                        class="btn btn-sm btn-secondary" />
-                                </form>
+                                <a th:href="@{/avaliacaos/resposta-avaliacao/{id}(id=${avaliacoes.id})}"
+                                    th:text="#{avaliacao.responder.label}" class="btn btn-sm btn-secondary" />
                             </div>
                         </td>
                     </tr>
