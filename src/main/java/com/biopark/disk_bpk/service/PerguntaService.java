@@ -50,6 +50,10 @@ public class PerguntaService {
     public Long create(final PerguntaDTO perguntaDTO) {
         final Pergunta pergunta = new Pergunta();
         mapToEntity(perguntaDTO, pergunta);
+        perguntaRepository.save(pergunta);
+        for (Opcao opcao : pergunta.getOpcoes()) {
+            opcao.setPergunta(pergunta);
+        }
         return perguntaRepository.save(pergunta).getId();
     }
 
