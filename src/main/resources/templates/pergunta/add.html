@@ -1,24 +1,48 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorate="~{layout}">
-    <head>
-        <title th:text="#{pergunta.add.headline}" />
-    </head>
-    <body>
-        <div layout:fragment="content">
-            <div class="d-flex flex-wrap mb-4">
-                <h1 th:text="#{pergunta.add.headline}" class="flex-grow-1" />
-                <div>
-                    <a th:href="@{/perguntas}" th:text="#{pergunta.add.back}" class="btn btn-secondary" />
+    layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{pergunta.add.headline}" />
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex flex-wrap mb-4">
+            <h1 th:text="#{pergunta.add.headline}" class="flex-grow-1" />
+            <div>
+                <a th:href="@{/perguntas}" th:text="#{pergunta.add.back}" class="btn btn-secondary" />
+            </div>
+        </div>
+        <div th:replace="~{fragments/forms::globalErrors('pergunta')}" />
+        <form th:action="${requestUri}" method="post">
+            <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='questao')}" />
+            <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='ajuda')}" />
+            <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='tipoPergunta', type='radio')}" />
+
+            <div th:each="opcao, stat : ${pergunta.opcoes}">
+                <div class="row mb-3">
+                    <label th:for="${'opcao-' + stat.index}" th:text="${'Opção ' + stat.index}"
+                        class="col-md-2 col-form-label" />
+                    <div class="col-md-6">
+                        <input th:id="${'opcao-' + stat.index}"
+                            th:field="*{pergunta.opcoes[__${stat.index}__].descricao}"
+                            th:value="*{pergunta.opcoes[__${stat.index}__].descricao}" type="text"
+                            class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <select th:field="*{pergunta.opcoes[__${stat.index}__].valorDisk}" class="form-select">
+                            <option value="" th:text="#{select.empty.label}" />
+                            <option th:each="optionValue : ${valorDiskOpcaoEnumvalues}" th:text="${optionValue}"
+                                th:value="${optionValue}" />
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div th:replace="~{fragments/forms::globalErrors('pergunta')}" />
-            <form th:action="${requestUri}" method="post">
-                <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='questao')}" />
-                <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='ajuda')}" />
-                <div th:replace="~{fragments/forms::inputRow(object='pergunta', field='tipoPergunta', type='radio')}" />
-                <input type="submit" th:value="#{pergunta.add.headline}" class="btn btn-primary mt-4" />
-            </form>
-        </div>
-    </body>
+
+            <input type="submit" th:value="#{pergunta.add.headline}" class="btn btn-primary mt-4" />
+        </form>
+    </div>
+</body>
+
 </html>

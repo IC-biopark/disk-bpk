@@ -4,6 +4,8 @@ import com.biopark.disk_bpk.domain.Pergunta;
 import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;
+import com.biopark.disk_bpk.model.PerguntaDTO;
+import com.biopark.disk_bpk.model.RespostaDTO;
 import com.biopark.disk_bpk.repos.PerguntaRepository;
 import com.biopark.disk_bpk.repos.TurmaRepository;
 import com.biopark.disk_bpk.repos.UsuarioRepository;
@@ -24,6 +26,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Controller
@@ -106,4 +110,23 @@ public class AvaliacaoController {
         return "avaliacao/avaliacoes-para-responder";
     }
 
+    @GetMapping("resposta-avaliacao/{id}")
+    public String respostaAvaliacao(final Model model, @PathVariable final Long id) {
+        AvaliacaoDTO avaliacao = avaliacaoService.get(id);
+        List<RespostaDTO> respostas = new ArrayList<>();
+        List<PerguntaDTO> perguntas = (List<PerguntaDTO>) perguntaRepository
+                .findAllById(avaliacao.getPerguntaList().stream().map(pergunta -> pergunta.getId()).toList())
+                .stream()
+                .map(PerguntaDTO::new).toList();
+
+        for (PerguntaDTO perguntaId : avaliacao.getPerguntaList()) {
+            RespostaDTO respostaDTO = new RespostaDTO();
+            respostaDTO.setPergunta(perguntaId.getId());
+            respostas.add(respostaDTO);
+        }
+        model.addAttribute("perguntas", perguntas);
+        model.addAttribute("respostas", respostas);
+        model.addAttribute("avaliacao", avaliacao);
+        return "avaliacao/resposta-avaliacao";
+    }
 }

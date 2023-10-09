@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{avaliacao.add.headline}" />
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex flex-wrap mb-4">
+            <h1 th:text="#{avaliacao.add.headline}" class="flex-grow-1" />
+            <div>
+                <a th:href="@{/avaliacaos}" th:text="#{avaliacao.add.back}" class="btn btn-secondary" />
+            </div>
+        </div>
+        <div th:replace="~{fragments/forms::globalErrors('avaliacao')}"></div>
+        <form th:action="${requestUri}" method="post">
+            <div th:each="pergunta, i : ${avaliacao.perguntaList}">
+                <h2 th:text="${pergunta.questao}" class="flex-grow-1" />
+                <div th:each="opcao, i : ${pergunta.opcoes}">
+                    <div class="col-md-6">
+                        <input th:id="${'opcao-' + stat.index}"
+                               th:field="*{pergunta.opcoes[__${i.index}__].descricao}"
+                               th:value="*{pergunta.opcoes[__${i.index}__].descricao}" type="radio"
+                               class="form-check-input" />
+                    </div>
+                </div>
+            </div>
+            <input type="submit" th:value="#{avaliacao.add.headline}" class="btn btn-primary mt-4" />
+        </form>
+    </div>
+</body>
+
+</html>

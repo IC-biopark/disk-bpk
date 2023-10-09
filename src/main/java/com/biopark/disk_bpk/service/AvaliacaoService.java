@@ -6,6 +6,7 @@ import com.biopark.disk_bpk.domain.Resposta;
 import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;
+import com.biopark.disk_bpk.model.PerguntaDTO;
 import com.biopark.disk_bpk.repos.AvaliacaoRepository;
 import com.biopark.disk_bpk.repos.PerguntaRepository;
 import com.biopark.disk_bpk.repos.RespostaRepository;
@@ -22,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 
 @Service
 @Transactional
@@ -69,9 +69,7 @@ public class AvaliacaoService {
         avaliacaoDTO.setId(avaliacao.getId());
         avaliacaoDTO.setTitulo(avaliacao.getTitulo());
         avaliacaoDTO.setDescricao(avaliacao.getDescricao());
-        avaliacaoDTO.setPerguntaList(avaliacao.getPerguntaList().stream()
-                .map(pergunta -> pergunta.getId())
-                .toList());
+        avaliacaoDTO.setPerguntaList(avaliacao.getPerguntaList().stream().map(PerguntaDTO::new).toList());
         avaliacaoDTO.setUsuariosQueFinalizaram(avaliacao.getUsuariosQueFinalizaram().stream()
                 .map(usuario -> usuario.getId())
                 .toList());
@@ -82,14 +80,17 @@ public class AvaliacaoService {
         avaliacao.setTitulo(avaliacaoDTO.getTitulo());
         avaliacao.setDescricao(avaliacaoDTO.getDescricao());
         final List<Pergunta> perguntaList = perguntaRepository.findAllById(
-                avaliacaoDTO.getPerguntaList() == null ? Collections.emptyList() : avaliacaoDTO.getPerguntaList());
-        if (perguntaList.size() != (avaliacaoDTO.getPerguntaList() == null ? 0 : avaliacaoDTO.getPerguntaList().size())) {
+                avaliacaoDTO.getPerguntaList() == null ? Collections.emptyList() : avaliacaoDTO.getPerguntaList().stream().map(p -> p.getId()).toList());
+        if (perguntaList
+                .size() != (avaliacaoDTO.getPerguntaList() == null ? 0 : avaliacaoDTO.getPerguntaList().size())) {
             throw new NotFoundException("one of perguntaList not found");
         }
         avaliacao.setPerguntaList(perguntaList.stream().collect(Collectors.toSet()));
         final List<Usuario> usuariosQueFinalizaram = usuarioRepository.findAllById(
-                avaliacaoDTO.getUsuariosQueFinalizaram() == null ? Collections.emptyList() : avaliacaoDTO.getUsuariosQueFinalizaram());
-        if (usuariosQueFinalizaram.size() != (avaliacaoDTO.getUsuariosQueFinalizaram() == null ? 0 : avaliacaoDTO.getUsuariosQueFinalizaram().size())) {
+                avaliacaoDTO.getUsuariosQueFinalizaram() == null ? Collections.emptyList()
+                        : avaliacaoDTO.getUsuariosQueFinalizaram());
+        if (usuariosQueFinalizaram.size() != (avaliacaoDTO.getUsuariosQueFinalizaram() == null ? 0
+                : avaliacaoDTO.getUsuariosQueFinalizaram().size())) {
             throw new NotFoundException("one of usuariosQueFinalizaram not found");
         }
         avaliacao.setUsuariosQueFinalizaram(usuariosQueFinalizaram.stream().collect(Collectors.toSet()));
@@ -111,16 +112,28 @@ public class AvaliacaoService {
 
     /**
      * Retorna a uma lista de avaliações que o usuario tem que responder.
-     * O critério para saber as avaliações que ele tem que responder é as turmas as quais ele participa
+     * O critério para saber as avaliações que ele tem que responder é as turmas as
+     * quais ele participa
      * 
      * @param id - Id do usuario logado
      */
     public List<Avaliacao> findAvaliacoesParaResponder(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow();
         List<Avaliacao> avaliacoesParaResponder = new ArrayList<>();
+
+        // Retorna todas as avaliações que o usuario tem que responder de acordo com a
+        // turma que ele esta
         for (Turma turma : usuario.getTurmaList()) {
             avaliacoesParaResponder.add(avaliacaoRepository.findByTurma(turma));
         }
+
+        // Remove todas as avaliações que o usuario ja respondeu
+        for (Avaliacao avaliacao : avaliacoesParaResponder) {
+            if (avaliacao.getUsuariosQueFinalizaram().contains(usuario)) {
+                avaliacoesParaResponder.remove(avaliacao);
+            }
+        }
+
         return avaliacoesParaResponder;
     }
 

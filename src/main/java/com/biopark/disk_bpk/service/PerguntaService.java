@@ -1,8 +1,10 @@
 package com.biopark.disk_bpk.service;
 
 import com.biopark.disk_bpk.domain.Avaliacao;
+import com.biopark.disk_bpk.domain.Opcao;
 import com.biopark.disk_bpk.domain.Pergunta;
 import com.biopark.disk_bpk.domain.Resposta;
+import com.biopark.disk_bpk.model.OpcaoDTO;
 import com.biopark.disk_bpk.model.PerguntaDTO;
 import com.biopark.disk_bpk.repos.AvaliacaoRepository;
 import com.biopark.disk_bpk.repos.PerguntaRepository;
@@ -11,6 +13,7 @@ import com.biopark.disk_bpk.util.NotFoundException;
 import com.biopark.disk_bpk.util.WebUtils;
 import jakarta.transaction.Transactional;
 import java.util.List;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +50,10 @@ public class PerguntaService {
     public Long create(final PerguntaDTO perguntaDTO) {
         final Pergunta pergunta = new Pergunta();
         mapToEntity(perguntaDTO, pergunta);
+        perguntaRepository.save(pergunta);
+        for (Opcao opcao : pergunta.getOpcoes()) {
+            opcao.setPergunta(pergunta);
+        }
         return perguntaRepository.save(pergunta).getId();
     }
 
@@ -78,6 +85,12 @@ public class PerguntaService {
         pergunta.setQuestao(perguntaDTO.getQuestao());
         pergunta.setAjuda(perguntaDTO.getAjuda());
         pergunta.setTipoPergunta(perguntaDTO.getTipoPergunta());
+        for (OpcaoDTO opcaoDTO : perguntaDTO.getOpcoes()) {
+            final Opcao opcao = new Opcao();
+            opcao.setDescricao(opcaoDTO.getDescricao());
+            opcao.setValorDisk(opcaoDTO.getValorDisk());
+            pergunta.getOpcoes().add(opcao);
+        }
         return pergunta;
     }
 

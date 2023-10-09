@@ -1,10 +1,15 @@
 package com.biopark.disk_bpk.controller;
 
+import com.biopark.disk_bpk.domain.enums.ValorDiskOpcaoEnum;
+import com.biopark.disk_bpk.model.OpcaoDTO;
 import com.biopark.disk_bpk.model.PerguntaDTO;
 import com.biopark.disk_bpk.model.TipoPergunta;
 import com.biopark.disk_bpk.service.PerguntaService;
 import com.biopark.disk_bpk.util.WebUtils;
 import jakarta.validation.Valid;
+
+import java.util.ArrayList;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 @Controller
 @RequestMapping("/perguntas")
@@ -29,6 +33,7 @@ public class PerguntaController {
     @ModelAttribute
     public void prepareContext(final Model model) {
         model.addAttribute("tipoPerguntaValues", TipoPergunta.values());
+        model.addAttribute("valorDiskOpcaoEnumvalues", ValorDiskOpcaoEnum.values());
     }
 
     @GetMapping
@@ -39,6 +44,15 @@ public class PerguntaController {
 
     @GetMapping("/add")
     public String add(@ModelAttribute("pergunta") final PerguntaDTO perguntaDTO) {
+        // Certifique-se de que perguntaDTO já tenha a lista de opcoes configurada
+        if (perguntaDTO.getOpcoes() == null) {
+            perguntaDTO.setOpcoes(new ArrayList<>()); // Inicialize a lista se estiver nula
+        }
+        // Adicione objetos OpcaoDTO vazios, se necessário
+        while (perguntaDTO.getOpcoes().size() < 4) {
+            OpcaoDTO opcao = new OpcaoDTO();
+            perguntaDTO.getOpcoes().add(opcao);
+        }
         return "pergunta/add";
     }
 
