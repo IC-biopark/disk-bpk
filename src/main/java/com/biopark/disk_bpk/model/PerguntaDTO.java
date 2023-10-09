@@ -37,7 +37,7 @@ public class PerguntaDTO {
         this.id = pergunta.getId();
         this.questao = pergunta.getQuestao();
         this.ajuda = pergunta.getAjuda();
-        this.tipoPergunta = this.getTipoPergunta();
-        this.opcoes = this.getOpcoes();
+        this.tipoPergunta = pergunta.getTipoPergunta();
+        this.opcoes = pergunta.getOpcoes().stream().map(OpcaoDTO::new).toList();
     }
 }

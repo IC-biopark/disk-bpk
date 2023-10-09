@@ -1,5 +1,6 @@
 package com.biopark.disk_bpk.model;
 
+import com.biopark.disk_bpk.domain.Opcao;
 import com.biopark.disk_bpk.domain.enums.ValorDiskOpcaoEnum;
 
 import jakarta.validation.constraints.NotNull;
@@ -15,4 +16,9 @@ public class OpcaoDTO {
 
     @NotNull
     private ValorDiskOpcaoEnum valorDisk;
+
+    public OpcaoDTO(Opcao opcao) {
+        this.descricao = opcao.getDescricao();
+        this.valorDisk = opcao.getValorDisk();
+    }
 }
