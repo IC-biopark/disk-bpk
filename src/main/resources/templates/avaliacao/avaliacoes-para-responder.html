@@ -10,9 +10,6 @@
     <div layout:fragment="content">
         <div class="d-flex flex-wrap mb-4">
             <h1 th:text="#{avaliacao.avaliacoes-para-responder.headline}" class="flex-grow-1" />
-            <div>
-                <a th:href="@{/avaliacoes/add}" th:text="#{avaliacao.list.createNew}" class="btn btn-primary ms-2" />
-            </div>
         </div>
         <div th:if="${avaliacoes.empty}" th:text="#{avaliacao.list.empty}" />
         <div th:if="${!avaliacoes.empty}" class="table-responsive">
@@ -33,7 +30,7 @@
                         <td>
                             <div class="float-end text-nowrap">
                                 <a th:href="@{/avaliacaos/resposta-avaliacao/{id}(id=${avaliacoes.id})}"
-                                    th:text="#{avaliacao.responder.label}" class="btn btn-sm btn-secondary" />
+                                    th:text="#{avaliacao.responder.label}" class="btn btn-sm btn-outline-success" />
                             </div>
                         </td>
                     </tr>

@@ -43,7 +43,7 @@ public class AvaliacaoController {
     public void prepareContext(final Model model) {
         model.addAttribute("perguntaListValues", perguntaRepository.findAll(Sort.by("id"))
                 .stream()
-                .collect(CustomCollectors.toSortedMap(Pergunta::getId, Pergunta::getQuestao)));
+                .collect(CustomCollectors.toSortedMap(PerguntaDTO::new, Pergunta::getQuestao)));
         model.addAttribute("usuariosQueFinalizaramValues", usuarioRepository.findAll(Sort.by("id"))
                 .stream()
                 .collect(CustomCollectors.toSortedMap(Usuario::getId, Usuario::getNome)));

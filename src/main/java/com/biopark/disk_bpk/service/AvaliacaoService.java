@@ -124,13 +124,20 @@ public class AvaliacaoService {
         // Retorna todas as avaliações que o usuario tem que responder de acordo com a
         // turma que ele esta
         for (Turma turma : usuario.getTurmaList()) {
-            avaliacoesParaResponder.add(avaliacaoRepository.findByTurma(turma));
+            Avaliacao avaliacao = avaliacaoRepository.findByTurma(turma);
+            if (avaliacao != null) {
+                avaliacoesParaResponder.add(avaliacao);
+            }
         }
 
         // Remove todas as avaliações que o usuario ja respondeu
         for (Avaliacao avaliacao : avaliacoesParaResponder) {
-            if (avaliacao.getUsuariosQueFinalizaram().contains(usuario)) {
-                avaliacoesParaResponder.remove(avaliacao);
+            if (avaliacao != null) {
+                if (avaliacao.getUsuariosQueFinalizaram() != null) {
+                    if (avaliacao.getUsuariosQueFinalizaram().contains(usuario)) {
+                        avaliacoesParaResponder.remove(avaliacao);
+                    }
+                }
             }
         }
 
