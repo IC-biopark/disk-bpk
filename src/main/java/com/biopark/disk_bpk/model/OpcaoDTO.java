@@ -6,8 +6,10 @@ import com.biopark.disk_bpk.domain.enums.ValorDiskOpcaoEnum;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class OpcaoDTO {
 
     @NotNull
