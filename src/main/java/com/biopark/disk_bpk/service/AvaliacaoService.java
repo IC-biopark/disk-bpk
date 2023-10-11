@@ -144,4 +144,9 @@ public class AvaliacaoService {
         return avaliacoesParaResponder;
     }
 
+    public void finalizarAvaliacao(AvaliacaoDTO avaliacao) {
+        Avaliacao avaliacaoFinalizada = new Avaliacao();
+        avaliacaoFinalizada = mapToEntity(avaliacao, avaliacaoFinalizada);
+    }
+
 }

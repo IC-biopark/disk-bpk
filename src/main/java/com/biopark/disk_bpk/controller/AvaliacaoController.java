@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -69,6 +70,7 @@ public class AvaliacaoController {
         if (bindingResult.hasErrors()) {
             return "avaliacao/add";
         }
+        // TODO - enviar email para pessoas que participam da turma que possuem uma nova avaliação
         avaliacaoService.create(avaliacaoDTO);
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("avaliacao.create.success"));
         return "redirect:/avaliacaos";
@@ -126,8 +128,18 @@ public class AvaliacaoController {
             respostas.add(respostaDTO);
         }
         model.addAttribute("perguntas", perguntas);
-        model.addAttribute("respostas", respostas);
         model.addAttribute("avaliacao", avaliacao);
         return "avaliacao/resposta-avaliacao";
+    }
+    
+    @PostMapping("resposta-avaliacao/{id}")
+    public String responderAvaliacao(@PathVariable final Long id, @ModelAttribute AvaliacaoDTO avaliacao, final BindingResult bindingResult, final RedirectAttributes redirectAttributes, Authentication authentication) {
+
+        if (bindingResult.hasErrors()){
+            return "avaliacaos/avaliacoes-para-responder/" + authentication.getPrincipal();
+        }
+        avaliacaoService.finalizarAvaliacao(avaliacao);
+        redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("avaliacao.finalizada.success"));
+        return "redirect:avaliacaos/avaliacoes-para-responder/" + authentication.getPrincipal();
     }
 }
