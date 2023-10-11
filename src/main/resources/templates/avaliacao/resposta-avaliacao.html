@@ -22,8 +22,8 @@
                     <div class="col-md-6 mb-3">
                         <input th:id="${'opcao-' + i.index}"
                                th:text="*{avaliacao.perguntaList[__${ip.index}__].opcoes[__${i.index}__].descricao}"
-                               th:field="*{avaliacao.perguntaList[__${ip.index}__].opcoes[__${i.index}__].descricao}"
-                               th:value="*{avaliacao.perguntaList[__${ip.index}__].opcoes[__${i.index}__].descricao}" type="radio"
+                               th:field="*{avaliacao.perguntaList[__${ip.index}__].resposta.opcaoEscolhida}"
+                               th:value="*{avaliacao.perguntaList[__${ip.index}__].resposta.opcaoEscolhida}" type="radio"
                                class="form-check-input" />
                     </div>
                 </div>

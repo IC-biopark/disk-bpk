@@ -122,6 +122,7 @@ public class AvaliacaoController {
         for (PerguntaDTO perguntaId : avaliacao.getPerguntaList()) {
             RespostaDTO respostaDTO = new RespostaDTO();
             respostaDTO.setPergunta(perguntaId.getId());
+            perguntaId.setResposta(respostaDTO);
             respostas.add(respostaDTO);
         }
         model.addAttribute("perguntas", perguntas);

@@ -33,6 +33,8 @@ public class PerguntaDTO {
     @NotNull
     private List<OpcaoDTO> opcoes = new ArrayList<>();
 
+    private RespostaDTO resposta;
+
     public PerguntaDTO (Pergunta pergunta) {
         this.id = pergunta.getId();
         this.questao = pergunta.getQuestao();
