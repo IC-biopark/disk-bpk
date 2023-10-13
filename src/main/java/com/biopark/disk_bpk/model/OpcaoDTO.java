@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OpcaoDTO {
 
+    private Long id;
+
     @NotNull
     @Size(max = 255)
     private String descricao;
@@ -20,6 +22,7 @@ public class OpcaoDTO {
     private ValorDiskOpcaoEnum valorDisk;
 
     public OpcaoDTO(Opcao opcao) {
+        this.id = opcao.getId();
         this.descricao = opcao.getDescricao();
         this.valorDisk = opcao.getValorDisk();
     }

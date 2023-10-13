@@ -1,16 +1,16 @@
 package com.biopark.disk_bpk.controller;
 
 import com.biopark.disk_bpk.domain.Cargo;
-import com.biopark.disk_bpk.domain.Resposta;
 import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.model.UsuarioDTO;
 import com.biopark.disk_bpk.repos.CargoRepository;
-import com.biopark.disk_bpk.repos.RespostaRepository;
 import com.biopark.disk_bpk.repos.TurmaRepository;
 import com.biopark.disk_bpk.service.UsuarioService;
 import com.biopark.disk_bpk.util.CustomCollectors;
 import com.biopark.disk_bpk.util.WebUtils;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,22 +24,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
+@AllArgsConstructor
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final TurmaRepository turmaRepository;
     private final CargoRepository cargoRepository;
-    private final RespostaRepository respostaRepository;
-
-    public UsuarioController(final UsuarioService usuarioService,
-            final TurmaRepository turmaRepository, final CargoRepository cargoRepository,
-            final RespostaRepository respostaRepository) {
-        this.usuarioService = usuarioService;
-        this.turmaRepository = turmaRepository;
-        this.cargoRepository = cargoRepository;
-        this.respostaRepository = respostaRepository;
-    }
 
     @ModelAttribute
     public void prepareContext(final Model model) {
@@ -49,9 +40,6 @@ public class UsuarioController {
         model.addAttribute("cargoValues", cargoRepository.findAll(Sort.by("id"))
                 .stream()
                 .collect(CustomCollectors.toSortedMap(Cargo::getId, Cargo::getNome)));
-        model.addAttribute("respostaListValues", respostaRepository.findAll(Sort.by("id"))
-                .stream()
-                .collect(CustomCollectors.toSortedMap(Resposta::getId, Resposta::getDescricao)));
     }
 
     @GetMapping

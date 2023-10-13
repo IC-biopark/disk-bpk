@@ -5,11 +5,11 @@ import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;
 import com.biopark.disk_bpk.model.PerguntaDTO;
-import com.biopark.disk_bpk.model.RespostaDTO;
 import com.biopark.disk_bpk.repos.PerguntaRepository;
 import com.biopark.disk_bpk.repos.TurmaRepository;
 import com.biopark.disk_bpk.repos.UsuarioRepository;
 import com.biopark.disk_bpk.service.AvaliacaoService;
+import com.biopark.disk_bpk.service.RespostaService;
 import com.biopark.disk_bpk.util.CustomCollectors;
 import com.biopark.disk_bpk.util.WebUtils;
 import jakarta.validation.Valid;
@@ -26,10 +26,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.ArrayList;
-import java.util.List;
-
 @AllArgsConstructor
 @Controller
 @RequestMapping("/avaliacaos")
@@ -39,6 +35,7 @@ public class AvaliacaoController {
     private final PerguntaRepository perguntaRepository;
     private final UsuarioRepository usuarioRepository;
     private final TurmaRepository turmaRepository;
+    private final RespostaService respostaService;
 
     @ModelAttribute
     public void prepareContext(final Model model) {
@@ -70,7 +67,8 @@ public class AvaliacaoController {
         if (bindingResult.hasErrors()) {
             return "avaliacao/add";
         }
-        // TODO - enviar email para pessoas que participam da turma que possuem uma nova avaliação
+        // TODO - enviar email para pessoas que participam da turma que possuem uma nova
+        // avaliação
         avaliacaoService.create(avaliacaoDTO);
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("avaliacao.create.success"));
         return "redirect:/avaliacaos";
@@ -115,31 +113,48 @@ public class AvaliacaoController {
     @GetMapping("resposta-avaliacao/{id}")
     public String respostaAvaliacao(final Model model, @PathVariable final Long id) {
         AvaliacaoDTO avaliacao = avaliacaoService.get(id);
-        List<RespostaDTO> respostas = new ArrayList<>();
-        List<PerguntaDTO> perguntas = (List<PerguntaDTO>) perguntaRepository
-                .findAllById(avaliacao.getPerguntaList().stream().map(pergunta -> pergunta.getId()).toList())
-                .stream()
-                .map(PerguntaDTO::new).toList();
-
-        for (PerguntaDTO perguntaId : avaliacao.getPerguntaList()) {
-            RespostaDTO respostaDTO = new RespostaDTO();
-            respostaDTO.setPergunta(perguntaId.getId());
-            perguntaId.setResposta(respostaDTO);
-            respostas.add(respostaDTO);
-        }
-        model.addAttribute("perguntas", perguntas);
         model.addAttribute("avaliacao", avaliacao);
         return "avaliacao/resposta-avaliacao";
     }
-    
-    @PostMapping("resposta-avaliacao/{id}")
-    public String responderAvaliacao(@PathVariable final Long id, @ModelAttribute AvaliacaoDTO avaliacao, final BindingResult bindingResult, final RedirectAttributes redirectAttributes, Authentication authentication) {
 
-        if (bindingResult.hasErrors()){
-            return "avaliacaos/avaliacoes-para-responder/" + authentication.getPrincipal();
+    /**
+     * Finaliza uma avaliação para um usuario especifico
+     * 
+     * @param id
+     * @param avaliacao
+     * @param bindingResult
+     * @param redirectAttributes
+     * @param authentication
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("resposta-avaliacao/{id}")
+    public String responderAvaliacao(@PathVariable final Long id, @ModelAttribute AvaliacaoDTO avaliacao, 
+            final BindingResult bindingResult,
+            final RedirectAttributes redirectAttributes, Authentication authentication) throws Exception {
+                
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+
+        if (bindingResult.hasErrors()) {
+            return "avaliacaos/avaliacoes-para-responder/" + usuario.getId();
         }
-        avaliacaoService.finalizarAvaliacao(avaliacao);
+
+        try {
+            avaliacaoService.finalizarAvaliacao(avaliacao, usuario);
+            /**
+             * Salva a resposta de cada pergunta
+             */
+            for (PerguntaDTO pergunta : avaliacao.getPerguntaList()) {
+                pergunta.getResposta().setAvaliacao(id);
+                pergunta.getResposta().setPergunta(pergunta.getId());
+                pergunta.getResposta().setUsuario(usuario.getId());
+                respostaService.create(pergunta.getResposta());
+            }
+        } catch (Exception e) {
+            throw new Exception("Não foi possível salvar a avaliação");
+        }
+
         redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("avaliacao.finalizada.success"));
-        return "redirect:avaliacaos/avaliacoes-para-responder/" + authentication.getPrincipal();
+        return "redirect:avaliacaos/avaliacoes-para-responder/" + usuario.getId();
     }
 }

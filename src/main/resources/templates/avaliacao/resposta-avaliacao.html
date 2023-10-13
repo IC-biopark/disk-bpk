@@ -16,15 +16,17 @@
         </div>
         <div th:replace="~{fragments/forms::globalErrors('avaliacao')}"></div>
         <form th:action="${requestUri}" method="post">
+            <input type="hidden" th:field="*{avaliacao.descricao}" />
+            <input type="hidden" th:field="*{avaliacao.titulo}" />
             <div th:each="pergunta, ip : ${avaliacao.perguntaList}">
+                <input type="hidden" th:field="*{avaliacao.perguntaList[__${ip.index}__].id}" />
                 <h4 th:text="${ip.index+1 + ' - ' + pergunta.questao}" class="flex-grow-1 mb-3" />
                 <div th:each="opcao, i : ${pergunta.opcoes}">
                     <div class="col-md-6 mb-3">
                         <input th:id="${'opcao-' + i.index}"
-                               th:text="*{avaliacao.perguntaList[__${ip.index}__].opcoes[__${i.index}__].descricao}"
-                               th:field="*{avaliacao.perguntaList[__${ip.index}__].resposta.opcaoEscolhida}"
-                               th:value="*{avaliacao.perguntaList[__${ip.index}__].resposta.opcaoEscolhida}" type="radio"
-                               class="form-check-input" />
+                            th:text="*{avaliacao.perguntaList[__${ip.index}__].opcoes[__${i.index}__].descricao}"
+                            th:field="*{avaliacao.perguntaList[__${ip.index}__].resposta.opcaoEscolhida}"
+                            th:value="${opcao.id}" type="radio" class="form-check-input" />
                     </div>
                 </div>
             </div>

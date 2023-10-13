@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -144,9 +146,12 @@ public class AvaliacaoService {
         return avaliacoesParaResponder;
     }
 
-    public void finalizarAvaliacao(AvaliacaoDTO avaliacao) {
+    public void finalizarAvaliacao(AvaliacaoDTO avaliacao, Usuario usuario) {
         Avaliacao avaliacaoFinalizada = new Avaliacao();
         avaliacaoFinalizada = mapToEntity(avaliacao, avaliacaoFinalizada);
+        Usuario usuarioQueFinalizouAAvaliacao = usuarioRepository.findById(usuario.getId()).orElseThrow(() -> new ServiceException("Usuário não encontrado"));
+        avaliacaoFinalizada.getUsuariosQueFinalizaram().add(usuarioQueFinalizouAAvaliacao);
+        avaliacaoRepository.save(avaliacaoFinalizada);
     }
 
 }
