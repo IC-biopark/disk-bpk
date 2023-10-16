@@ -7,3 +7,24 @@ services:
     - POSTGRES_PASSWORD=P4ssword!
     ports:
     - 5434:5432
+    networks:
+      - disc-network
+  disc-api:
+    build: .
+    container_name: disc-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - JDBC_DATABASE_URL=jdbc:postgresql://postgres:5432/disk-bpk
+      - JDBC_DATABASE_USERNAME=postgres
+      - JDBC_DATABASE_PASSWORD=P4ssword!
+    volumes:
+      - ~/.m2:/root/.m2
+    networks:
+      - disc-network
+    
+networks:
+  disc-network:
+    driver: bridge

@@ -1,6 +1,7 @@
 package com.biopark.disk_bpk.service;
 
 import com.biopark.disk_bpk.domain.Avaliacao;
+import com.biopark.disk_bpk.domain.Opcao;
 import com.biopark.disk_bpk.domain.Pergunta;
 import com.biopark.disk_bpk.domain.Resposta;
 import com.biopark.disk_bpk.domain.Usuario;
@@ -12,9 +13,10 @@ import com.biopark.disk_bpk.repos.UsuarioRepository;
 import com.biopark.disk_bpk.util.NotFoundException;
 import com.biopark.disk_bpk.util.WebUtils;
 import java.util.List;
+
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class RespostaService {
@@ -66,20 +68,27 @@ public class RespostaService {
 
     private RespostaDTO mapToDTO(final Resposta resposta, final RespostaDTO respostaDTO) {
         respostaDTO.setId(resposta.getId());
-        respostaDTO.setDescricao(resposta.getDescricao());
         respostaDTO.setPergunta(resposta.getPergunta() == null ? null : resposta.getPergunta().getId());
         respostaDTO.setAvaliacao(resposta.getAvaliacao() == null ? null : resposta.getAvaliacao().getId());
         return respostaDTO;
     }
 
     private Resposta mapToEntity(final RespostaDTO respostaDTO, final Resposta resposta) {
-        resposta.setDescricao(respostaDTO.getDescricao());
-        final Pergunta pergunta = respostaDTO.getPergunta() == null ? null : perguntaRepository.findById(respostaDTO.getPergunta())
-                .orElseThrow(() -> new NotFoundException("pergunta not found"));
+        final Pergunta pergunta = respostaDTO.getPergunta() == null ? null
+                : perguntaRepository.findById(respostaDTO.getPergunta())
+                        .orElseThrow(() -> new NotFoundException("pergunta not found"));
         resposta.setPergunta(pergunta);
-        final Avaliacao avaliacao = respostaDTO.getAvaliacao() == null ? null : avaliacaoRepository.findById(respostaDTO.getAvaliacao())
-                .orElseThrow(() -> new NotFoundException("avaliacao not found"));
+        final Avaliacao avaliacao = respostaDTO.getAvaliacao() == null ? null
+                : avaliacaoRepository.findById(respostaDTO.getAvaliacao())
+                        .orElseThrow(() -> new NotFoundException("avaliacao not found"));
         resposta.setAvaliacao(avaliacao);
+        resposta.setUsuario(usuarioRepository.findById(respostaDTO.getUsuario())
+                .orElseThrow(() -> new ServiceException("Usuário não encontrado")));
+        resposta.setOpcao(new Opcao());
+        resposta.getOpcao().setId(respostaDTO.getOpcaoEscolhida().getId());
+        resposta.getOpcao().setDescricao(respostaDTO.getOpcaoEscolhida().getDescricao());
+        resposta.getOpcao().setPergunta(perguntaRepository.findById(respostaDTO.getPergunta()).orElseThrow());
+        resposta.getOpcao().setValorDisk(respostaDTO.getOpcaoEscolhida().getValorDisk());
         return resposta;
     }
 
