@@ -97,9 +97,17 @@ public class UsuarioService {
     }
 
     private Usuario mapToEntity(final UsuarioDTO usuarioDTO, final Usuario usuario) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
         Cargo cargo = cargoRepository.findById(usuarioDTO.getCargo()).orElseThrow();
         List<Turma> turmaList = turmaRepository.findAllById(usuarioDTO.getTurmaList());
-        String senha = get(usuarioDTO.getId()).getSenha();
+        String senha = "";
+
+        if (usuarioDTO.getId()!= null) 
+            senha = get(usuarioDTO.getId()).getSenha();
+        else
+            senha = encoder.encode(usuarioDTO.getSenha());
+
         BeanUtils.copyProperties(usuarioDTO, usuario);
         usuario.setSenha(senha);
         usuario.setCargo(cargo);

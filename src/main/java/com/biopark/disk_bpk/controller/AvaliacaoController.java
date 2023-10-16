@@ -136,7 +136,7 @@ public class AvaliacaoController {
         Usuario usuario = (Usuario) authentication.getPrincipal();
 
         if (bindingResult.hasErrors()) {
-            return "avaliacaos/avaliacoes-para-responder/" + usuario.getId();
+            return "/avaliacaos/avaliacoes-para-responder/" + usuario.getId();
         }
 
         try {
@@ -155,6 +155,6 @@ public class AvaliacaoController {
         }
 
         redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("avaliacao.finalizada.success"));
-        return "redirect:avaliacaos/avaliacoes-para-responder/" + usuario.getId();
+        return "redirect:/avaliacaos/avaliacoes-para-responder/" + usuario.getId();
     }
 }
