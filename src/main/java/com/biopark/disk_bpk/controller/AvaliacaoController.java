@@ -1,9 +1,11 @@
 package com.biopark.disk_bpk.controller;
 
+import com.biopark.disk_bpk.domain.Avaliacao;
 import com.biopark.disk_bpk.domain.Pergunta;
 import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;
+import com.biopark.disk_bpk.model.AvaliacaoFinalizadaDTO;
 import com.biopark.disk_bpk.model.PerguntaDTO;
 import com.biopark.disk_bpk.repos.PerguntaRepository;
 import com.biopark.disk_bpk.repos.TurmaRepository;
@@ -14,6 +16,9 @@ import com.biopark.disk_bpk.util.CustomCollectors;
 import com.biopark.disk_bpk.util.WebUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 @AllArgsConstructor
 @Controller
 @RequestMapping("/avaliacaos")
@@ -129,10 +135,10 @@ public class AvaliacaoController {
      * @throws Exception
      */
     @PostMapping("resposta-avaliacao/{id}")
-    public String responderAvaliacao(@PathVariable final Long id, @ModelAttribute AvaliacaoDTO avaliacao, 
+    public String responderAvaliacao(@PathVariable final Long id, @ModelAttribute AvaliacaoDTO avaliacao,
             final BindingResult bindingResult,
             final RedirectAttributes redirectAttributes, Authentication authentication) throws Exception {
-                
+
         Usuario usuario = (Usuario) authentication.getPrincipal();
 
         if (bindingResult.hasErrors()) {
@@ -156,5 +162,29 @@ public class AvaliacaoController {
 
         redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("avaliacao.finalizada.success"));
         return "redirect:/avaliacaos/avaliacoes-para-responder/" + usuario.getId();
+    }
+
+    @GetMapping("resultados/{id}")
+    public String resultados(@PathVariable final Long id, final Model model) {
+        AvaliacaoDTO avaliacao = avaliacaoService.get(id);
+        List<AvaliacaoFinalizadaDTO> avaliacoesFinalizadas = new ArrayList<>();
+        avaliacao.getUsuariosQueFinalizaram().forEach(usuarioId -> {
+            Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow();
+            AvaliacaoFinalizadaDTO avaliacaoDoUsuario = new AvaliacaoFinalizadaDTO();
+            List<Avaliacao> avaliacaoFinalizadaOpt = usuario.getAvaliacoesFinalizadas();
+            if (avaliacaoFinalizadaOpt != null && avaliacaoFinalizadaOpt.size() > 0) {
+                for (Avaliacao avaliacaoFinalizada : avaliacaoFinalizadaOpt) {
+                    if (avaliacaoFinalizada.getId().equals(id)) {
+                        avaliacaoDoUsuario.setDescricao(avaliacaoFinalizada.getDescricao());
+                        avaliacaoDoUsuario.setTitulo(avaliacaoFinalizada.getTitulo());
+                        avaliacaoDoUsuario.setUsuario(usuario.getNome());
+                        avaliacaoDoUsuario.setId(avaliacaoFinalizada.getId());
+                        avaliacoesFinalizadas.add(avaliacaoDoUsuario);
+                    }
+                }
+            }
+        });
+        model.addAttribute("avaliacoes", avaliacoesFinalizadas);
+        return "avaliacao/resultados";
     }
 }

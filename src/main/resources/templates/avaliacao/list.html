@@ -30,6 +30,7 @@
                             <td th:text="${avaliacao.descricao}" />
                             <td>
                                 <div class="float-end text-nowrap">
+                                    <a th:href="@{/avaliacaos/resultados/{id}(id=${avaliacao.id})}" th:text="#{avaliacao.list.resultados}" class="btn btn-sm btn-secondary" />
                                     <a th:href="@{/avaliacaos/edit/{id}(id=${avaliacao.id})}" th:text="#{avaliacao.list.edit}" class="btn btn-sm btn-secondary" />
                                     <form th:action="@{/avaliacaos/delete/{id}(id=${avaliacao.id})}"
                                             th:data-confirm-message="#{delete.confirm}" method="post" class="js-submit-confirm d-inline">
