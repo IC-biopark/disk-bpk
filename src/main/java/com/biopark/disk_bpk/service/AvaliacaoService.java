@@ -147,7 +147,7 @@ public class AvaliacaoService {
     }
 
     public void finalizarAvaliacao(AvaliacaoDTO avaliacao, Usuario usuario) {
-        Avaliacao avaliacaoFinalizada = new Avaliacao();
+        Avaliacao avaliacaoFinalizada = avaliacaoRepository.findById(avaliacao.getId()).orElseThrow(() -> new ServiceException("Avaliação não encontrada"));
         avaliacaoFinalizada = mapToEntity(avaliacao, avaliacaoFinalizada);
         Usuario usuarioQueFinalizouAAvaliacao = usuarioRepository.findById(usuario.getId()).orElseThrow(() -> new ServiceException("Usuário não encontrado"));
         avaliacaoFinalizada.getUsuariosQueFinalizaram().add(usuarioQueFinalizouAAvaliacao);
