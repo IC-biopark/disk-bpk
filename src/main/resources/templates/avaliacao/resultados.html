@@ -30,8 +30,8 @@
                         <td th:text="${avaliacao.usuario}" />
                         <td>
                             <div class="float-end text-nowrap">
-                                <a th:href="@{/avaliacaos/resposta-avaliacao/{id}(id=${avaliacao.id})}"
-                                    th:text="#{avaliacao.responder.label}" class="btn btn-sm btn-outline-success" />
+                                <a th:href="@{'/avaliacaos/resultado/' + ${avaliacao.id} + '/' + ${avaliacao.usuarioId} }"
+                                    th:text="#{avaliacao.verresultado.label}" class="btn btn-sm btn-outline-success" />
                             </div>
                         </td>
                     </tr>

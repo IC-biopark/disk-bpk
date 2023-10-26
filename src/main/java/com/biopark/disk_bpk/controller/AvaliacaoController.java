@@ -2,11 +2,13 @@ package com.biopark.disk_bpk.controller;
 
 import com.biopark.disk_bpk.domain.Avaliacao;
 import com.biopark.disk_bpk.domain.Pergunta;
+import com.biopark.disk_bpk.domain.Resposta;
 import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;
 import com.biopark.disk_bpk.model.AvaliacaoFinalizadaDTO;
 import com.biopark.disk_bpk.model.PerguntaDTO;
+import com.biopark.disk_bpk.model.ResultadoAvaliacaoDTO;
 import com.biopark.disk_bpk.repos.PerguntaRepository;
 import com.biopark.disk_bpk.repos.TurmaRepository;
 import com.biopark.disk_bpk.repos.UsuarioRepository;
@@ -179,6 +181,7 @@ public class AvaliacaoController {
                         avaliacaoDoUsuario.setTitulo(avaliacaoFinalizada.getTitulo());
                         avaliacaoDoUsuario.setUsuario(usuario.getNome());
                         avaliacaoDoUsuario.setId(avaliacaoFinalizada.getId());
+                        avaliacaoDoUsuario.setUsuarioId(usuarioId);
                         avaliacoesFinalizadas.add(avaliacaoDoUsuario);
                     }
                 }
@@ -186,5 +189,12 @@ public class AvaliacaoController {
         });
         model.addAttribute("avaliacoes", avaliacoesFinalizadas);
         return "avaliacao/resultados";
+    }
+
+    @GetMapping("resultado/{id}/{usuarioid}")
+    public String visualizarResultadoDoUsuario (@PathVariable(name = "id") final Long avaliacaoId, @PathVariable(name = "usuarioid") Long usuarioId, Model model) {
+        ResultadoAvaliacaoDTO resultadoAvaliacao = avaliacaoService.analisaResultadoDaAvaliacao(avaliacaoId, usuarioId);
+        model.addAttribute("resultado", resultadoAvaliacao);
+        return "avaliacao/resultado-do-aluno";
     }
 }

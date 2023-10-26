@@ -5,8 +5,11 @@ import com.biopark.disk_bpk.domain.Pergunta;
 import com.biopark.disk_bpk.domain.Resposta;
 import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
+import com.biopark.disk_bpk.domain.enums.ValorDiskOpcaoEnum;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;
+import com.biopark.disk_bpk.model.AvaliacaoFinalizadaDTO;
 import com.biopark.disk_bpk.model.PerguntaDTO;
+import com.biopark.disk_bpk.model.ResultadoAvaliacaoDTO;
 import com.biopark.disk_bpk.repos.AvaliacaoRepository;
 import com.biopark.disk_bpk.repos.PerguntaRepository;
 import com.biopark.disk_bpk.repos.RespostaRepository;
@@ -82,7 +85,8 @@ public class AvaliacaoService {
         avaliacao.setTitulo(avaliacaoDTO.getTitulo());
         avaliacao.setDescricao(avaliacaoDTO.getDescricao());
         final List<Pergunta> perguntaList = perguntaRepository.findAllById(
-                avaliacaoDTO.getPerguntaList() == null ? Collections.emptyList() : avaliacaoDTO.getPerguntaList().stream().map(p -> p.getId()).toList());
+                avaliacaoDTO.getPerguntaList() == null ? Collections.emptyList()
+                        : avaliacaoDTO.getPerguntaList().stream().map(p -> p.getId()).toList());
         if (perguntaList
                 .size() != (avaliacaoDTO.getPerguntaList() == null ? 0 : avaliacaoDTO.getPerguntaList().size())) {
             throw new NotFoundException("one of perguntaList not found");
@@ -147,11 +151,57 @@ public class AvaliacaoService {
     }
 
     public void finalizarAvaliacao(AvaliacaoDTO avaliacao, Usuario usuario) {
-        Avaliacao avaliacaoFinalizada = avaliacaoRepository.findById(avaliacao.getId()).orElseThrow(() -> new ServiceException("Avaliação não encontrada"));
+        Avaliacao avaliacaoFinalizada = avaliacaoRepository.findById(avaliacao.getId())
+                .orElseThrow(() -> new ServiceException("Avaliação não encontrada"));
         avaliacaoFinalizada = mapToEntity(avaliacao, avaliacaoFinalizada);
-        Usuario usuarioQueFinalizouAAvaliacao = usuarioRepository.findById(usuario.getId()).orElseThrow(() -> new ServiceException("Usuário não encontrado"));
+        Usuario usuarioQueFinalizouAAvaliacao = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new ServiceException("Usuário não encontrado"));
         avaliacaoFinalizada.getUsuariosQueFinalizaram().add(usuarioQueFinalizouAAvaliacao);
         avaliacaoRepository.save(avaliacaoFinalizada);
+    }
+
+    public ResultadoAvaliacaoDTO analisaResultadoDaAvaliacao(Long avaliacaoId, Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow();
+        List<Resposta> respostasDaAvaliacaoDoUsuario = usuario.getRespostaList().stream()
+                .filter(resposta -> resposta.getAvaliacao().getId().equals(avaliacaoId)).toList();
+        ResultadoAvaliacaoDTO resultadoAvaliacaoDTO = new ResultadoAvaliacaoDTO();
+
+        Long dominancia = 0l;
+        Long influencia = 0l;
+        Long estabilidade = 0l;
+        Long conformidade = 0l;
+
+        for (Resposta resposta : respostasDaAvaliacaoDoUsuario) {
+            if (resposta.getOpcao().getValorDisk() == ValorDiskOpcaoEnum.D) {
+                dominancia++;
+            } else if (resposta.getOpcao().getValorDisk() == ValorDiskOpcaoEnum.I) {
+                influencia++;
+            } else if (resposta.getOpcao().getValorDisk() == ValorDiskOpcaoEnum.S) {
+                estabilidade++;
+            } else if (resposta.getOpcao().getValorDisk() == ValorDiskOpcaoEnum.C) {
+                conformidade++;
+            }
+        }
+
+        resultadoAvaliacaoDTO.setDominancia(dominancia);
+        resultadoAvaliacaoDTO.setInfluencia(influencia);
+        resultadoAvaliacaoDTO.setEstbilidade(estabilidade);
+        resultadoAvaliacaoDTO.setConformidade(conformidade);
+
+
+        Long maiorValor = Math.max(Math.max(Math.max(dominancia, influencia), estabilidade), conformidade);
+
+        if (maiorValor == dominancia) {
+            resultadoAvaliacaoDTO.setPerfilDoAluno("Dominância");
+        } else if (maiorValor == influencia) {
+            resultadoAvaliacaoDTO.setPerfilDoAluno("Influência");
+        } else if (maiorValor == estabilidade) {
+            resultadoAvaliacaoDTO.setPerfilDoAluno("Estabilidade");
+        } else if (maiorValor == conformidade) {
+            resultadoAvaliacaoDTO.setPerfilDoAluno("Conformidade");
+        }
+        
+        return resultadoAvaliacaoDTO;
     }
 
 }
