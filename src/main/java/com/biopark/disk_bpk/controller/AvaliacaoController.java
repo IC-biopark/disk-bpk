@@ -2,7 +2,6 @@ package com.biopark.disk_bpk.controller;
 
 import com.biopark.disk_bpk.domain.Avaliacao;
 import com.biopark.disk_bpk.domain.Pergunta;
-import com.biopark.disk_bpk.domain.Resposta;
 import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;

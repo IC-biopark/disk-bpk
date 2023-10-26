@@ -7,7 +7,6 @@ import com.biopark.disk_bpk.domain.Turma;
 import com.biopark.disk_bpk.domain.Usuario;
 import com.biopark.disk_bpk.domain.enums.ValorDiskOpcaoEnum;
 import com.biopark.disk_bpk.model.AvaliacaoDTO;
-import com.biopark.disk_bpk.model.AvaliacaoFinalizadaDTO;
 import com.biopark.disk_bpk.model.PerguntaDTO;
 import com.biopark.disk_bpk.model.ResultadoAvaliacaoDTO;
 import com.biopark.disk_bpk.repos.AvaliacaoRepository;
