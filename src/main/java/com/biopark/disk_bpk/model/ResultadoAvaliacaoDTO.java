@@ -11,7 +11,7 @@ public class ResultadoAvaliacaoDTO {
 
     private  Long dominancia; 
     private  Long influencia;
-    private  Long estbilidade;
+    private  Long estabilidade;
     private  Long conformidade;
 
 }

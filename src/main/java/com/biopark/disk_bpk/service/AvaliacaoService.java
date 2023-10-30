@@ -182,11 +182,19 @@ public class AvaliacaoService {
             }
         }
 
-        resultadoAvaliacaoDTO.setDominancia(dominancia);
-        resultadoAvaliacaoDTO.setInfluencia(influencia);
-        resultadoAvaliacaoDTO.setEstbilidade(estabilidade);
-        resultadoAvaliacaoDTO.setConformidade(conformidade);
+        int somaTotal = (int) (dominancia + influencia + estabilidade + conformidade);
 
+        double percentualDominancia = (double) dominancia / somaTotal;
+        double percentualInfluencia = (double) influencia / somaTotal;
+        double percentualEstabilidade = (double) estabilidade / somaTotal;
+        double percentualConformidade = (double) conformidade / somaTotal;
+
+        double partesTotal = 6.0;
+
+        resultadoAvaliacaoDTO.setDominancia((long) (percentualDominancia * partesTotal));
+        resultadoAvaliacaoDTO.setInfluencia((long) (percentualInfluencia * partesTotal));
+        resultadoAvaliacaoDTO.setEstabilidade((long) (percentualEstabilidade * partesTotal));
+        resultadoAvaliacaoDTO.setConformidade((long) (percentualConformidade * partesTotal));
 
         Long maiorValor = Math.max(Math.max(Math.max(dominancia, influencia), estabilidade), conformidade);
 
@@ -199,7 +207,7 @@ public class AvaliacaoService {
         } else if (maiorValor == conformidade) {
             resultadoAvaliacaoDTO.setPerfilDoAluno("Conformidade");
         }
-        
+
         return resultadoAvaliacaoDTO;
     }
 

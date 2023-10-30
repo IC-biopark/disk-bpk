@@ -5,53 +5,101 @@
 <head>
     <title th:text="#{avaliacao.resultado.headline}" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
+    <script th:inline="javascript">
+
 
         // Load the Visualization API and the corechart package.
-        google.charts.load('current', {'packages':['corechart']});
-  
+        google.charts.load('current', { 'packages': ['corechart'] });
+
         // Set a callback to run when the Google Visualization API is loaded.
         google.charts.setOnLoadCallback(criarGraficos);
 
-        function criarGraficos(){
+        function criarGraficos() {
             drawChart()
         }
-  
+
         // Callback that creates and populates a data table,
         // instantiates the pie chart, passes in the data and
         // draws it.
         function drawChart() {
-  
-          // Create the data table.
-          var data = new google.visualization.DataTable();
-          data.addColumn('string', 'Topping');
-          data.addColumn('number', 'Slices');
-          data.addRows([
-            ['Dominância', 3],
-            ['Influência', 1],
-            ['Estabilidade', 1],
-            ['Conformidade', 1],
-          ]);
-  
-          // Set chart options
-          var options = {'title':'Perfil do aluno',
-                         'width':600,
-                         'height':600};
-  
-          // Instantiate and draw our chart, passing in some options.
-          var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-          chart.draw(data, options);
+
+            // Create the data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Topping');
+            data.addColumn('number', 'Slices');
+
+            /*<![CDATA[*/
+            var dominanciaValue = /*[[${resultado.dominancia}]]*/ 'a';
+            var influenciaValue = /*[[${resultado.influencia}]]*/ 'b';
+            var estabilidadeValue = /*[[${resultado.estabilidade}]]*/ 'c';
+            var conformidadeValue = /*[[${resultado.conformidade}]]*/ 'd';
+            /*]]>*/
+
+            if (dominanciaValue !== 0) {
+                data.addRow(['Dominância', dominanciaValue]);
+            }
+
+            if (influenciaValue !== 0) {
+                data.addRow(['Influência', influenciaValue]);
+            }
+
+            if (estabilidadeValue !== 0) {
+                data.addRow(['Estabilidade', estabilidadeValue]);
+            }
+
+            if (conformidadeValue !== 0) {
+                data.addRow(['Conformidade', conformidadeValue]);
+            }
+
+            // Set chart options
+            var options = {
+                'title': 'Perfil do aluno',
+                'width': 600,
+                'height': 600
+            };
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
         }
-      </script>
+    </script>
 </head>
 
 <body>
-    <div layout:fragment="content">
+    <!-- <div layout:fragment="content">
         <div class="d-flex flex-wrap mb-4">
             <h1 th:text="#{avaliacao.resultado.headline}" class="flex-grow-1" />
         </div>
-        <div class="justify-content-center d-flex">
-            <div id="chart_div"></div>
+        <div>
+            <div class="card">
+                <div class="card-body">
+                    <h1 th:text="${resultado.perfilDoAluno}"  class="card-text mb-4 d-flex justify-content-center"/>
+                    <div id="chart_div" class="mb-4 d-flex justify-content-center"></div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <div layout:fragment="content">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="display-4 " th:text="#{avaliacao.resultado.headline}" />
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <h1 class="display-6" th:text="${resultado.perfilDoAluno}" />
+                </div>
+            </div>
+            <div class="row mt-4 justify-content-center">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="chart_div"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
